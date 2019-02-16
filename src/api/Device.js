@@ -18,3 +18,18 @@ export function getDeviceList(params) {
     data: params
   })
 }
+
+/**
+ * 根据父id查询子分类
+ * @param params
+ */
+export function listCategoryByPId(params) {
+  return request({
+    url: API.listCategoryByPId,
+    method: 'post',
+    data: {
+      queryPage: params.queryPage,
+      parentId: params.parentId
+    }
+  })
+}
