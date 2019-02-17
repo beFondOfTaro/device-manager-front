@@ -99,6 +99,7 @@ import { DEVICE_STATUS } from '@/constants/device-status'
 export default {
   name: 'DeviceTable',
   filters: {
+    // 设备状态过滤器
     statusFilter(status) {
       const statusMap = {}
       statusMap[DEVICE_STATUS.IN_STORAGE.code] = 'success'
@@ -108,8 +109,9 @@ export default {
     }
   },
   props: {
+    // 分类树选择的分类id
     categoryId: {
-      type: 'String',
+      type: String,
       default: null
     }
   },
@@ -149,14 +151,15 @@ export default {
   },
   watch: {
     categoryId(newId, oldId) {
+      this.searchDeviceParams.categoryId = newId
       this.fetchData()
     }
   },
   created() {
-    this.searchDeviceParams.categoryId = this.categoryId
     this.fetchData()
   },
   methods: {
+    // 获取设备列表
     fetchData() {
       this.listLoading = true
       getDeviceList(this.searchDeviceParams).then(response => {

@@ -11,7 +11,7 @@ export const API = {
   // 删除设备
   deleteDevice: 'delete-device/',
   // 获取添加设备的选项卡数据
-  getDeviceSelection: 'device/search-selection',
+  getDeviceSelection: 'device/search-selection/',
   // 分发设备
   distributeDevice: 'device/distribute',
   // 报废设备

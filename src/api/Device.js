@@ -33,3 +33,14 @@ export function listCategoryByPId(params) {
     }
   })
 }
+
+/**
+ * 获取添加设备的选项卡数据
+ * @param params
+ */
+export function getDeviceSelection(params) {
+  return request({
+    url: API.getDeviceSelection + params.pageSize,
+    method: 'post'
+  })
+}
