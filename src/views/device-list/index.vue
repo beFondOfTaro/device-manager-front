@@ -9,7 +9,7 @@
           <device-search-bar/>
         </el-header>
         <el-main>
-          <device-table :category-id="selectedCategoryId"/>
+          <device-table :category-id="selectedCategoryId" :search-params="deviceSearchParams"/>
         </el-main>
       </el-container>
     </el-container>
@@ -21,6 +21,9 @@
 import DeviceTable from '@/views/device-list/components/DeviceTable'
 import CategoryTree from '@/views/device-list/components/CategoryTree'
 import DeviceSearchBar from '@/views/device-list/components/DeviceSearchBar'
+import { createNamespacedHelpers } from 'vuex'
+
+const { mapGetters } = createNamespacedHelpers('device')
 
 export default {
   name: 'DeviceList',
@@ -34,9 +37,10 @@ export default {
     }
   },
   computed: {
-    selectedCategoryId() {
-      return this.$store.getters.selectedCategoryId
-    }
+    ...mapGetters([
+      'selectedCategoryId',
+      'deviceSearchParams'
+    ])
   },
   mounted() {
   }

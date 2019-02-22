@@ -113,6 +113,19 @@ export default {
     categoryId: {
       type: String,
       default: null
+    },
+    // 设备搜索参数
+    searchParams: {
+      type: Object,
+      default() {
+        return {
+          locationId: null,
+          brandId: null,
+          deviceModelId: null,
+          workNatureId: null,
+          searchKey: ''
+        }
+      }
     }
   },
   data() {
@@ -153,6 +166,17 @@ export default {
     categoryId(newId, oldId) {
       this.searchDeviceParams.categoryId = newId
       this.fetchData()
+    },
+    searchParams: {
+      handler(newParams, oldParams) {
+        this.searchDeviceParams.locationId = newParams.locationId
+        this.searchDeviceParams.brandId = newParams.brandId
+        this.searchDeviceParams.deviceModelId = newParams.deviceModelId
+        this.searchDeviceParams.workNatureId = newParams.workNatureId
+        this.searchDeviceParams.queryKey = newParams.searchKey
+        this.fetchData()
+      },
+      deep: true
     }
   },
   created() {
@@ -199,10 +223,6 @@ export default {
       console.log(`当前页: ${val}`)
       this.searchDeviceParams.queryPage.pageNum = val
       this.fetchData()
-    },
-    // 根据分类查询设备
-    listDeviceByCategoryId(categoryId) {
-      this.searchDeviceParams
     }
   }
 }

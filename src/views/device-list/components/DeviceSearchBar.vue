@@ -4,7 +4,7 @@
       <el-option
         :key="-1"
         :label="'全部地点'"
-        :value="''"/>
+        :value="null"/>
       <el-option
         v-for="item in selections.locationList"
         :key="item.id"
@@ -15,29 +15,29 @@
       <el-option
         :key="-1"
         :label="'全部品牌'"
-        :value="''"/>
+        :value="null"/>
       <el-option
         v-for="item in selections.brandList"
         :key="item.id"
         :label="item.name"
         :value="item.id"/>
     </el-select>
-    <el-select v-model="searchParams.brandId" placeholder="请选择">
+    <el-select v-model="searchParams.deviceModelId" placeholder="请选择">
       <el-option
         :key="-1"
         :label="'全部型号'"
-        :value="''"/>
+        :value="null"/>
       <el-option
         v-for="item in selections.deviceModelList"
         :key="item.id"
         :label="item.name"
         :value="item.id"/>
     </el-select>
-    <el-select v-model="searchParams.brandId" placeholder="请选择">
+    <el-select v-model="searchParams.workNatureId" placeholder="请选择">
       <el-option
         :key="-1"
         :label="'全部工作性质'"
-        :value="''"/>
+        :value="null"/>
       <el-option
         v-for="item in selections.workNatureList"
         :key="item.id"
@@ -46,13 +46,14 @@
     </el-select>
     <div class="search-key-input">
       检索关键字：<el-input v-model="searchParams.searchKey" placeholder="请输入内容"/>
-      <el-button type="primary">查询</el-button>
+      <el-button type="primary" @click="doSearch()">查询</el-button>
     </div>
   </div>
 </template>
 
 <script>
 import { getDeviceSelection } from '@/api/Device'
+import { deepCloneObject } from '@/utils/BeanUtil'
 
 export default {
   name: 'DeviceSearchBar',
@@ -67,11 +68,11 @@ export default {
         custodianList: []
       },
       searchParams: {
-        locationId: '',
-        brandId: '',
-        deviceModelId: '',
-        workNatureId: '',
-        searchKey: ''
+        locationId: null,
+        brandId: null,
+        deviceModelId: null,
+        workNatureId: null,
+        searchKey: null
       }
     }
   },
@@ -85,6 +86,9 @@ export default {
       }).then(res => {
         this.selections = res.data
       })
+    },
+    doSearch() {
+      this.$store.commit('device/SET_DEVICE_SEARCH_PARAMS', deepCloneObject(this.searchParams))
     }
   }
 }

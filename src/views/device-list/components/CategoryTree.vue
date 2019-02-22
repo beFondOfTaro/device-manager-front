@@ -45,7 +45,7 @@ export default {
         }).then(res => {
           resolve(res.data)
         })
-        this.$store.commit('SET_SELECTED_CATEGORY_ID', node.data.id)
+        this.$store.commit('device/SET_SELECTED_CATEGORY_ID', node.data.id)
       }
     }
   }
