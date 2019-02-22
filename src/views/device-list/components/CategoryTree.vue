@@ -12,6 +12,7 @@
 <script>
 import { QueryPage } from '@/utils/request'
 import { listCategoryByPId } from '@/api/Device'
+import { SET_SELECTED_CATEGORY_ID } from '@/constants/mutation-types/device-mutation-types'
 
 export default {
   name: 'CategoryTree',
@@ -45,7 +46,7 @@ export default {
         }).then(res => {
           resolve(res.data)
         })
-        this.$store.commit('device/SET_SELECTED_CATEGORY_ID', node.data.id)
+        this.$store.commit('device/' + SET_SELECTED_CATEGORY_ID, node.data.id)
       }
     }
   }

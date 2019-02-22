@@ -86,6 +86,8 @@ const user = {
     FedLogOut({ commit }) {
       return new Promise(resolve => {
         commit('SET_TOKEN', '')
+        commit('SET_ROLES', [])
+        commit('SET_USER_INFO', null)
         removeToken()
         localStorage.removeItem(LOCALSTORAGE_KEY.USER_INFO)
         resolve()

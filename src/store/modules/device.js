@@ -1,3 +1,5 @@
+import { SET_DEVICE_SEARCH_PARAMS, SET_SELECTED_CATEGORY_ID } from '@/constants/mutation-types/device-mutation-types'
+
 const device = {
   namespaced: true,
   state: {
@@ -13,10 +15,10 @@ const device = {
   },
   // 同步数据变更
   mutations: {
-    SET_SELECTED_CATEGORY_ID(state, categoryId) {
+    [SET_SELECTED_CATEGORY_ID](state, categoryId) {
       state.selectedCategoryId = categoryId
     },
-    SET_DEVICE_SEARCH_PARAMS(state, searchParams) {
+    [SET_DEVICE_SEARCH_PARAMS](state, searchParams) {
       state.deviceSearchParams = searchParams
     }
   },

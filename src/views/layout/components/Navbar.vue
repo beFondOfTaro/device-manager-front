@@ -41,8 +41,9 @@ export default {
     toggleSideBar() {
       this.$store.dispatch('ToggleSideBar')
     },
+    // TODO 需调用后端接口进行登出
     logout() {
-      this.$store.dispatch('LogOut').then(() => {
+      this.$store.dispatch('FedLogOut').then(() => {
         location.reload() // 为了重新实例化vue-router对象 避免bug
       })
     }

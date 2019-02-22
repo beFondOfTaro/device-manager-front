@@ -1,0 +1,10 @@
+/**
+ * 设置SELECTED_CATEGORY_ID
+ * @type {string}
+ */
+export const SET_SELECTED_CATEGORY_ID = 'SET_SELECTED_CATEGORY_ID'
+/**
+ * 设置DEVICE_SEARCH_PARAMS
+ * @type {string}
+ */
+export const SET_DEVICE_SEARCH_PARAMS = 'SET_DEVICE_SEARCH_PARAMS'

@@ -1,8 +1,9 @@
 import request from '@/utils/request'
+import { API } from '@/constants/api-url'
 
 export function login(identifier, credential, identifyType) {
   return request({
-    url: '/login',
+    url: API.login,
     method: 'post',
     data: {
       identifier,
@@ -22,7 +23,7 @@ export function getInfo(token) {
 
 export function logout() {
   return request({
-    url: '/user/logout',
+    url: '/logout',
     method: 'post'
   })
 }
