@@ -52,7 +52,7 @@
 </template>
 
 <script>
-import { getDeviceSelection } from '@/api/Device'
+import { getDeviceSelection } from '@/api/device'
 import { deepCloneObject } from '@/utils/BeanUtil'
 
 export default {

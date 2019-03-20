@@ -2,6 +2,10 @@
 export const API = {
   // 登录
   login: 'login',
+  // 获取验证码token
+  getValidationToken: 'interimToken',
+  // 用户获取图片验证码
+  getValidateCode: 'imageValidation/',
   // 查询设备列表
   listDevice: 'device/list',
   // 更新设备
@@ -25,7 +29,7 @@ export const API = {
   // 根据父id查询子分类
   listCategoryByPId: 'list-category-by-pId',
   // 分页查询所有用户
-  ListUser: 'user/list-by-page',
+  listUser: 'user/list-by-page',
   // 添加用户
   addUser: 'user/add',
   // 更新用户
@@ -55,5 +59,9 @@ export const API = {
   // 添加工作性质
   addWorkNature: 'work_nature/add',
   // 删除工作性质
-  deleteWorkNature: 'work_nature/delete/'
+  deleteWorkNature: 'work_nature/delete/',
+  // 多个设备导入：下载表格
+  downloadTemplate: 'device/download-device-template',
+  // 多个设备导入:上传
+  addList: 'device/add-list'
 }

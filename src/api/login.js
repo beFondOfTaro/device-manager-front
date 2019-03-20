@@ -1,29 +1,26 @@
 import request from '@/utils/request'
 import { API } from '@/constants/api-url'
 
-export function login(identifier, credential, identifyType) {
+export function login(identifier, credential, identifyType, imageValidationCode, validationToken) {
   return request({
     url: API.login,
     method: 'post',
     data: {
       identifier,
-      credential,
-      identifyType
+      credential: btoa(credential),
+      identifyType,
+      imageValidationCode,
+      validationToken
     }
   })
 }
 
-export function getInfo(token) {
+/**
+ * 获取验证码token
+ */
+export function getValidationToken() {
   return request({
-    url: '/user/info',
-    method: 'get',
-    params: { token }
-  })
-}
-
-export function logout() {
-  return request({
-    url: '/logout',
-    method: 'post'
+    url: API.getValidationToken,
+    method: 'get'
   })
 }

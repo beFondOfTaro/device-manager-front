@@ -92,7 +92,7 @@
 </template>
 
 <script>
-import { getDeviceList, SearchDeviceParams } from '@/api/Device'
+import { getDeviceList, SearchDeviceParams } from '@/api/device'
 import { getParsedTime } from '@/utils/time'
 import { DEVICE_STATUS } from '@/constants/device-status'
 
@@ -126,6 +126,11 @@ export default {
           searchKey: ''
         }
       }
+    },
+    // 设备搜索参数，设备状态
+    statusId: {
+      type: Number,
+      default: null
     }
   },
   data() {
@@ -180,6 +185,7 @@ export default {
     }
   },
   created() {
+    this.searchDeviceParams.statusId = this.statusId
     this.fetchData()
   },
   methods: {

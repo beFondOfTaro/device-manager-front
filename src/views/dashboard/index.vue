@@ -1,7 +1,9 @@
 <template>
   <div class="dashboard-container">
-    <div class="dashboard-text">name:{{ userInfo.username }}</div>
-    <div class="dashboard-text">roles:<span v-for="role in userInfo.roleList" :key="role.id">{{ role.name }}</span></div>
+    <div class="dashboard-text">用户名:{{ userInfo.username }}</div>
+    <div class="dashboard-text">姓名:{{ userInfo.realName }}</div>
+    <div class="dashboard-text">角色:<span v-for="role in userInfo.roleList" :key="role.id">{{ role.name }}</span></div>
+    <div class="dashboard-text">管理地点:<span v-for="location in userInfo.locationList" :key="location.id">{{ location.name + ' ' }}</span></div>
   </div>
 </template>
 

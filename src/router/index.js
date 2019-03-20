@@ -52,36 +52,60 @@ export const constantRouterMap = [
   },
 
   {
-    path: '/example',
+    path: '/in-store-device',
     component: Layout,
-    redirect: '/example/table',
-    name: 'Example',
-    meta: { title: 'Example', icon: 'example' },
     children: [
       {
-        path: 'table',
-        name: 'Table',
-        component: () => import('@/views/table/index'),
-        meta: { title: 'Table', icon: 'table' }
-      },
-      {
-        path: 'tree',
-        name: 'Tree',
-        component: () => import('@/views/tree/index'),
-        meta: { title: 'Tree', icon: 'tree' }
+        path: '',
+        name: 'in-store-device',
+        component: () => import('@/views/device-list/InStoreDevice'),
+        meta: { title: '库存设备', icon: 'form' }
       }
     ]
   },
 
   {
-    path: '/form',
+    path: '/using-device',
     component: Layout,
     children: [
       {
-        path: 'index',
-        name: 'Form',
-        component: () => import('@/views/form/index'),
-        meta: { title: 'Form', icon: 'form' }
+        path: '',
+        name: 'using-device',
+        component: () => import('@/views/device-list/UsingDevice'),
+        meta: { title: '使用中设备', icon: 'form' }
+      }
+    ]
+  },
+
+  {
+    path: '/discarded-device',
+    component: Layout,
+    children: [
+      {
+        path: '',
+        name: 'discarded-device',
+        component: () => import('@/views/device-list/DiscardedDevice'),
+        meta: { title: '废弃设备', icon: 'form' }
+      }
+    ]
+  },
+
+  {
+    path: '/system-setting',
+    component: Layout,
+    meta: { title: '系统设置', icon: 'form' },
+    children: [
+      {
+        path: 'user',
+        name: 'user-management',
+        component: () => import('@/views/system-setting/user-management/index.vue'),
+        meta: { title: '用户管理', icon: 'form' }
+      },
+      {
+        path: 'category',
+        name: 'category-management',
+        component: () => import('@/views/system-setting/category-management/index.vue'),
+        meta: { title: '分类管理', icon: 'form' }
       }
     ]
   },

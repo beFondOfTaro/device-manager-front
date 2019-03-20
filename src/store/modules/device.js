@@ -10,7 +10,8 @@ const device = {
       brandId: null,
       deviceModelId: null,
       workNatureId: null,
-      searchKey: null
+      searchKey: null,
+      statusId: null
     }
   },
   // 同步数据变更

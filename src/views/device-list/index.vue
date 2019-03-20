@@ -9,7 +9,7 @@
           <device-search-bar/>
         </el-header>
         <el-main>
-          <device-table :category-id="selectedCategoryId" :search-params="deviceSearchParams"/>
+          <device-table :category-id="selectedCategoryId" :search-params="deviceSearchParams" :status-id="statusId"/>
         </el-main>
       </el-container>
     </el-container>
@@ -31,6 +31,12 @@ export default {
     DeviceTable,
     CategoryTree,
     DeviceSearchBar
+  },
+  props: {
+    statusId: {
+      type: Number,
+      default: null
+    }
   },
   data() {
     return {

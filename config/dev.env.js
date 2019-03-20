@@ -3,6 +3,6 @@ const merge = require('webpack-merge')
 const prodEnv = require('./prod.env')
 
 module.exports = merge(prodEnv, {
-  NODE_ENV: '"/dev-manager/api_v1"',
-  BASE_API: '"https://easy-mock.com/mock/5950a2419adc231f356a6636/vue-admin"',
+  NODE_ENV: '"dev"',
+  BASE_API: '"/dev-manager/api_v1"',
 })

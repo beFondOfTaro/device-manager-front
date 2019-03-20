@@ -23,6 +23,12 @@
           <svg-icon :icon-class="pwdType === 'password' ? 'eye' : 'eye-open'" />
         </span>
       </el-form-item>
+      <el-form :inline="true" class="demo-form-inline" @submit.native.prevent>
+        <el-form-item prop="validationCode">
+          <el-input v-model="loginForm.imageValidationCode" placeholder="请输入验证码"/>
+        </el-form-item>
+        <img :src="validationCodeUrl" @click="getValidationToken()">
+      </el-form>
       <el-form-item>
         <el-button :loading="loading" type="primary" style="width:100%;" @click.native.prevent="handleLogin">
           Sign in
@@ -38,6 +44,8 @@
 
 <script>
 import { isvalidUsername } from '@/utils/validate'
+import { getValidationToken } from '@/api/login'
+import { API } from '@/constants/api-url'
 
 export default {
   name: 'Login',
@@ -60,7 +68,9 @@ export default {
       loginForm: {
         username: '',
         password: '',
-        identifyType: 0
+        identifyType: 0,
+        imageValidationCode: '',
+        validationToken: null
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
@@ -71,6 +81,11 @@ export default {
       redirect: undefined
     }
   },
+  computed: {
+    validationCodeUrl: function() {
+      return process.env.BASE_API + '/' + API.getValidateCode + this.loginForm.validationToken
+    }
+  },
   watch: {
     $route: {
       handler: function(route) {
@@ -78,6 +93,9 @@ export default {
       },
       immediate: true
     }
+  },
+  mounted() {
+    this.getValidationToken()
   },
   methods: {
     showPwd() {
@@ -101,6 +119,12 @@ export default {
           console.log('error submit!!')
           return false
         }
+      })
+    },
+    // 获取验证码token
+    getValidationToken() {
+      getValidationToken().then(res => {
+        this.loginForm.validationToken = res.data.token
       })
     }
   }

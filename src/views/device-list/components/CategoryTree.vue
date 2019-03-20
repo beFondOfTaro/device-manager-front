@@ -11,7 +11,7 @@
 
 <script>
 import { QueryPage } from '@/utils/request'
-import { listCategoryByPId } from '@/api/Device'
+import { listCategoryByPId } from '@/api/device'
 import { SET_SELECTED_CATEGORY_ID } from '@/constants/mutation-types/device-mutation-types'
 
 export default {
