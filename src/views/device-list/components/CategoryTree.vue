@@ -1,6 +1,7 @@
 <template>
   <div>
     <el-tree
+      v-loading="loading"
       ref="categoryTree"
       :props="defaultProps"
       :load="loadNode"
@@ -22,7 +23,8 @@ export default {
         label: 'name',
         children: 'zones',
         isLeaf: 'leaf'
-      }
+      },
+      loading: false
     }
   },
   mounted() {
@@ -32,11 +34,13 @@ export default {
     loadNode(node, resolve) {
       // 初始化树节点
       if (node.level === 0) {
+        this.loading = true
         listCategoryByPId({
           queryPage: new QueryPage(),
           parentId: ''
         }).then(res => {
           resolve(res.data)
+          this.loading = false
         })
       } else {
         // 加载子节点

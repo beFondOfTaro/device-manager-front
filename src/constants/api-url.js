@@ -37,7 +37,7 @@ export const API = {
   // 删除用户
   deleteUser: 'user/delete/',
   // 查询用户角色
-  getUserSelection: 'role/list-by-page',
+  listRole: 'role/list-by-page',
   // 根据父id查询地点
   addressDevice: 'list-location-by-pid',
   // 删除分类
