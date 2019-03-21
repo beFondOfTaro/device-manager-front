@@ -24,3 +24,10 @@ export function addUser(params) {
     data: params
   })
 }
+
+export function deleteUser(params) {
+  return request({
+    url: API.deleteUser + params.userId,
+    method: 'post'
+  })
+}

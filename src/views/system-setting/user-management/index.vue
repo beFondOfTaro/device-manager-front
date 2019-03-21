@@ -8,8 +8,8 @@
       :before-close="closeAddUser"
       title="添加用户"
       width="30%">
-      <el-form ref="form" :model="addUserRequest" label-width="80px">
-        <el-form-item label="用户名">
+      <el-form ref="form" :model="addUserRequest" :rules="rules" label-width="80px">
+        <el-form-item label="用户名" prop="username">
           <el-input v-model="addUserRequest.username"/>
         </el-form-item>
         <el-form-item label="角色">
@@ -44,7 +44,7 @@
 
 <script>
 import UserTable from '@/views/system-setting/user-management/components/UserTable'
-import {addUser, listRole} from '@/api/user'
+import { addUser, listRole } from '@/api/user'
 import { QueryPage } from '@/utils/request'
 
 export default {
@@ -57,9 +57,13 @@ export default {
       // 是否显示添加用户的对话框
       dialogVisible: false,
       addUserRequest: {
+        // 用户名
         username: '',
+        // 角色id
         roleId: '',
+        // 密码
         password: '',
+        // 真实姓名
         realName: '',
         phone: '',
         email: '',
@@ -68,7 +72,14 @@ export default {
       listRoleRequest: {
         queryPage: new QueryPage()
       },
-      roleList: []
+      roleList: [],
+      // 表单验证规则
+      rules: {
+        username: [
+          { required: true, message: '请输入用户名', trigger: 'blur' },
+          { min: 3, max: 16, message: '长度在 3 到 16 个字符', trigger: 'blur' }
+        ]
+      }
     }
   },
   methods: {

@@ -39,7 +39,7 @@
         <template slot-scope="scope">
           <el-button type="text" size="small">查看</el-button>
           <el-button type="text" size="small">编辑</el-button>
-          <el-button type="text" size="small">删除</el-button>
+          <el-button type="text" size="small" @click="deleteUser(scope.row.id, scope.row.username)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -56,7 +56,7 @@
 
 <script>
 import { QueryPage } from '@/utils/request'
-import { listUser } from '@/api/user'
+import { deleteUser, listUser } from '@/api/user'
 import { getParsedTime } from '@/utils/time'
 
 export default {
@@ -88,7 +88,7 @@ export default {
   },
   methods: {
     listUser() {
-      listUser(this.listUserRequest).then(res => {
+      listUser(this.listUserRequest.queryPage).then(res => {
         this.userList = res.data.list
         this.totalCount = res.data.total
       })
@@ -111,6 +111,19 @@ export default {
       console.log(`当前页: ${val}`)
       this.listUserRequest.queryPage.pageNum = val
       this.listUser()
+    },
+    // 删除用户
+    deleteUser(userId, username) {
+      this.$confirm('确定删除用户:' + username + ' 吗？')
+        .then(() => {
+          deleteUser({ userId }).then(res => {
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            })
+            this.listUser()
+          })
+        })
     }
   }
 }
