@@ -31,3 +31,11 @@ export function deleteUser(params) {
     method: 'post'
   })
 }
+
+export function updateUser(params) {
+  return request({
+    url: API.updateUser,
+    method: 'post',
+    params: params
+  })
+}
