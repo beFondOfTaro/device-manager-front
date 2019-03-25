@@ -44,3 +44,14 @@ export function getDeviceSelection(params) {
     method: 'post'
   })
 }
+
+export function listLocationByPid(params) {
+  return request({
+    url: API.listLocationByPid,
+    method: 'post',
+    data: {
+      parentId: params.locationId,
+      queryPage: params.queryPage
+    }
+  })
+}

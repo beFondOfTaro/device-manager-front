@@ -39,7 +39,7 @@ export const API = {
   // 查询用户角色
   listRole: 'role/list-by-page',
   // 根据父id查询地点
-  addressDevice: 'list-location-by-pid',
+  listLocationByPid: 'list-location-by-pid',
   // 删除分类
   deleteCategory: 'delete-category-by-id/',
   // 根据父id插入一个子分类
