@@ -102,6 +102,12 @@ export const constantRouterMap = [
         meta: { title: '用户管理', icon: 'form' }
       },
       {
+        path: 'role',
+        name: 'role-management',
+        component: () => import('@/views/system-setting/role-management/index.vue'),
+        meta: { title: '角色管理', icon: 'form' }
+      },
+      {
         path: 'category',
         name: 'category-management',
         component: () => import('@/views/system-setting/category-management/index.vue'),

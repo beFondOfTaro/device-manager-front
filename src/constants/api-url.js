@@ -63,5 +63,17 @@ export const API = {
   // 多个设备导入：下载表格
   downloadTemplate: 'device/download-device-template',
   // 多个设备导入:上传
-  addList: 'device/add-list'
+  addList: 'device/add-list',
+  role: {
+    // 添加角色
+    addRole: 'role/add',
+    // 删除角色
+    deleteRole: 'role/delete/',
+    // 更新角色权限
+    updateRolePermission: 'role/update-permission-list/',
+    // 查询所有角色信息
+    listRoles: 'role/list-by-page',
+    // 查询所有权限
+    listPermissions: 'permission'
+  }
 }
