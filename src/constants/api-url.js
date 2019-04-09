@@ -74,6 +74,8 @@ export const API = {
     // 查询所有角色信息
     listRoles: 'role/list-by-page',
     // 查询所有权限
-    listPermissions: 'permission'
+    listPermissions: 'role/permission',
+    // 根据角色id查询权限
+    listPermissionByRoleId: 'role/permission/list-by-role-id'
   }
 }

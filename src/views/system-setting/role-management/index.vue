@@ -36,7 +36,7 @@
 
 <script>
 import { deepCloneObject } from '@/utils/BeanUtil'
-import { listPermissions, listRoles, addRole, deleteRole, updateRolePermission } from '@/api/role'
+import { listPermissions, listRoles, addRole, deleteRole, updateRolePermission, listPermissionByRoleId } from '@/api/role'
 import { QueryPage } from '@/utils/request'
 const defaultRole = {
   id: '',
@@ -90,9 +90,13 @@ export default {
       this.dialogVisible = true
       this.checkStrictly = true
       this.role = deepCloneObject(scope.row)
-      this.$nextTick(() => {
-        // set checked state of a node not affects its father and child nodes
-        this.checkStrictly = false
+      listPermissionByRoleId({ roleId: this.role.id }).then(res => {
+        this.role.permissions = res.data
+        this.$refs.tree.setCheckedNodes(this.role.permissions.map(permission => permission.id))
+        this.$nextTick(() => {
+          // set checked state of a node not affects its father and child nodes
+          this.checkStrictly = false
+        })
       })
     },
     handleDelete({ $index, row }) {
@@ -102,7 +106,9 @@ export default {
         type: 'warning'
       })
         .then(async() => {
-          await deleteRole(row.id)
+          await deleteRole({
+            roleId: row.id
+          })
           this.rolesList.splice($index, 1)
           this.$message({
             type: 'success',
@@ -122,7 +128,7 @@ export default {
       } else {
         await addRole({
           name: this.role.name,
-          permissionIdList: this.role.permissions.map(item => item.id),
+          permissionIdList: checkedKeys,
           locationIds: []
         })
       }

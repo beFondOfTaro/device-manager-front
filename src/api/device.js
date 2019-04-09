@@ -55,3 +55,51 @@ export function listLocationByPid(params) {
     }
   })
 }
+
+/**
+ * 添加设备
+ * @param params
+ */
+export function addDevice(params) {
+  return request({
+    url: API.addDevice,
+    method: 'post',
+    data: params
+  })
+}
+
+/**
+ * 查询品牌列表
+ * @param params
+ */
+export function listBrand(params) {
+  return request({
+    url: API.listDeviceBrand,
+    method: 'post',
+    data: params
+  })
+}
+
+/**
+ * 查询设备型号
+ * @param params
+ */
+export function listDeviceModel(params) {
+  return request({
+    url: API.listDeviceModel,
+    method: 'post',
+    data: params
+  })
+}
+
+/**
+ * 查询工作性质
+ * @param params
+ */
+export function listWorkNature(params) {
+  return request({
+    url: API.listWorkNature,
+    method: 'post',
+    data: params
+  })
+}
