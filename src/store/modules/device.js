@@ -1,5 +1,4 @@
 import {
-  SET_ADD_DEVICE_CATEGORY_ID,
   SET_DEVICE_SEARCH_PARAMS,
   SET_SELECTED_CATEGORY_ID
 } from '@/constants/mutation-types/device-mutation-types'

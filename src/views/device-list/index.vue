@@ -10,7 +10,7 @@
         </el-header>
         <el-main>
           <div style="text-align: right"><el-button type="primary" @click="addDeviceDialogVisible = true">添加设备</el-button></div>
-          <device-table :category-id="selectedCategoryId" :search-params="deviceSearchParams" :status-id="statusId"/>
+          <device-table :add-device-dialog-data="addDeviceDialogData" :category-id="selectedCategoryId" :search-params="deviceSearchParams" :status-id="statusId"/>
         </el-main>
       </el-container>
     </el-container>
@@ -73,6 +73,9 @@
         <el-form-item label="单价">
           <el-input v-model="addDeviceRequest.unitPrice" type="number" placeholder="请输入单价"/>
         </el-form-item>
+        <el-form-item label="备注">
+          <el-input v-model="addDeviceRequest.description" type="text" placeholder="无"/>
+        </el-form-item>
       </el-form>
       <div style="text-align:right;">
         <el-button type="danger" @click="addDeviceDialogVisible=false">取消</el-button>
@@ -87,7 +90,7 @@ import DeviceTable from '@/views/device-list/components/DeviceTable'
 import CategoryTree from '@/views/device-list/components/CategoryTree'
 import DeviceSearchBar from '@/views/device-list/components/DeviceSearchBar'
 import { createNamespacedHelpers } from 'vuex'
-import {addDevice, listBrand, listDeviceModel, listLocationByPid, listWorkNature} from '@/api/device'
+import { addDevice, listBrand, listDeviceModel, listLocationByPid, listWorkNature } from '@/api/device'
 import { listUser } from '@/api/user'
 
 const { mapGetters } = createNamespacedHelpers('device')
@@ -132,7 +135,9 @@ export default {
         workNatureId: '',
         custodianId: '',
         amountUnitId: '1',
-        unitPrice: null
+        unitPrice: null,
+        // 备注
+        description: ''
       }
     }
   },
@@ -189,7 +194,7 @@ export default {
     },
     addDevice() {
       // 设备分类id，直接使用分类树选择的id
-      this.addDeviceRequest.categoryIds = [this.selectedCategoryId]
+      this.addDeviceRequest.categoryIds = [this.selectedCategoryId === null ? '0' : this.selectedCategoryId]
       addDevice(this.addDeviceRequest).then(res => {
         this.$notify({
           title: 'Success',

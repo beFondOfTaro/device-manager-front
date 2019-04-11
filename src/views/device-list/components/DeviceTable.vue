@@ -49,7 +49,7 @@
       </el-table-column>
       <el-table-column label="所在校区" width="110" align="center">
         <template slot-scope="scope">
-          {{ scope.row.locationStr.split('/')[0] }}
+          {{ scope.row.locationStr | topLocationFilter }}
         </template>
       </el-table-column>
       <el-table-column v-if="searchDeviceParams.statusId!=1" align="center" prop="created_at" label="领用时间" width="200">
@@ -78,7 +78,15 @@
           <el-tag :type="scope.row.statusId | statusFilter">{{ parseStatus(scope.row.statusId) }}</el-tag>
         </template>
       </el-table-column>
-
+      <el-table-column
+        fixed="right"
+        label="操作"
+        width="100">
+        <template slot-scope="scope">
+          <el-button type="text" size="small" @click="showDeviceDetail(scope.row)">查看</el-button>
+          <el-button type="text" size="small">编辑</el-button>
+        </template>
+      </el-table-column>
     </el-table>
     <el-pagination
       :current-page="searchDeviceParams.queryPage.pageNum"
@@ -88,6 +96,91 @@
       layout="total, sizes, prev, pager, next, jumper"
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"/>
+    <el-dialog
+      :visible.sync="deviceDetailVisible"
+      title="设备信息">
+      <el-tabs v-model="activeTabName" type="card" @tab-click="handleTabClick">
+        <el-tab-pane label="基本信息" name="baseInfo">
+          <el-form label-width="80px" label-position="left">
+            <el-form-item label="校区">
+              {{ deviceRow.locationStr | topLocationFilter }}
+            </el-form-item>
+            <el-form-item label="使用部门">
+              {{ getDepartment(deviceRow.locationStr) }}
+            </el-form-item>
+            <el-form-item label="名称">
+              <span v-if="!deviceDetailData.nameEditable">{{ deviceRow.name }}</span>
+              <el-input v-if="deviceDetailData.nameEditable" v-model="updateDeviceRequest.name" placeholder="名称"/>
+              <i class="el-icon-edit" @click="deviceDetailData.nameEditable = !deviceDetailData.nameEditable"/>
+            </el-form-item>
+            <el-form-item label="国资编号">
+              <span v-if="!deviceDetailData.nationalIdEditable">{{ deviceRow.nationalId }}</span>
+              <el-input v-if="deviceDetailData.nationalIdEditable" v-model="updateDeviceRequest.nationalId" placeholder="国资编号"/>
+            </el-form-item>
+            <el-form-item label="序列号">
+              <span v-if="!deviceDetailData.serialNumberEditable">{{ deviceRow.serialNumber }}</span>
+              <el-input v-if="deviceDetailData.serialNumberEditable" v-model="updateDeviceRequest.serialNumber" placeholder="序列号"/>
+            </el-form-item>
+            <el-form-item label="品牌">
+              <span v-if="!deviceDetailData.brandEditable">{{ deviceRow.brand.name }}</span>
+              <el-select v-if="deviceDetailData.brandEditable" v-model="updateDeviceRequest.brandId" placeholder="请选择品牌">
+                <el-option
+                  v-for="brand in addDeviceDialogData.brandList"
+                  :key="brand.id"
+                  :label="brand.name"
+                  :value="brand.id"/>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="型号">
+              <span v-if="!deviceDetailData.deviceModelEditable">{{ deviceRow.deviceModel }}</span>
+              <el-select v-if="deviceDetailData.deviceModelEditable" v-model="updateDeviceRequest.deviceModelId" placeholder="请选择型号">
+                <el-option
+                  v-for="deviceModel in addDeviceDialogData.deviceModels"
+                  :key="deviceModel.id"
+                  :label="deviceModel.name"
+                  :value="deviceModel.id"/>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="工作性质">
+              <span v-if="!deviceDetailData.workNatureEditable">{{ deviceRow.workNature }}</span>
+              <el-select v-if="deviceDetailData.workNatureEditable" v-model="updateDeviceRequest.workNatureId" placeholder="请选择工作性质">
+                <el-option
+                  v-for="workNature in addDeviceDialogData.workNatureList"
+                  :key="workNature.id"
+                  :label="workNature.name"
+                  :value="workNature.id"/>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="保管人">
+              <span v-if="!deviceDetailData.custodianEditable">{{ deviceRow.custodian }}</span>
+              <el-select v-if="deviceDetailData.custodianEditable" v-model="updateDeviceRequest.custodianId" placeholder="请选择保管人">
+                <el-option
+                  v-for="custodian in addDeviceDialogData.custodianList"
+                  :key="custodian.id"
+                  :label="custodian.realName"
+                  :value="custodian.id"/>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="单价">
+              <span v-if="!deviceDetailData.unitPriceEditable">{{ deviceRow.unitPrice }}</span>
+              <el-input v-if="deviceDetailData.unitPriceEditable" v-model="updateDeviceRequest.unitPrice" type="number" placeholder="请输入单价"/>
+            </el-form-item>
+            <el-form-item label="备注">
+              <span v-if="!deviceDetailData.descriptionEditable">{{ deviceRow.description }}</span>
+              <el-input v-if="deviceDetailData.descriptionEditable" v-model="updateDeviceRequest.description" type="text" placeholder="无"/>
+            </el-form-item>
+          </el-form>
+        </el-tab-pane>
+        <el-tab-pane label="状态记录" name="statusRecord">配置管理</el-tab-pane>
+        <el-tab-pane label="二维码" name="QRCode">
+          <img :src="QRCodeUrl">
+        </el-tab-pane>
+      </el-tabs>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="deviceDetailVisible = false">取 消</el-button>
+        <el-button type="primary" @click="deviceDetailVisible = false">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -95,6 +188,31 @@
 import { getDeviceList, SearchDeviceParams } from '@/api/device'
 import { getParsedTime } from '@/utils/time'
 import { DEVICE_STATUS } from '@/constants/device-status'
+import QRCode from 'qrcode'
+
+let defaultDeviceRow = {
+  'id': '0',
+  'name': '',
+  'nationalId': '',
+  'serialNumber': '',
+  'useTime': 0,
+  'unitPrice': 0,
+  'statusId': 0,
+  'createTime': 0,
+  'updateTime': 0,
+  'brand': {
+    'id': '0',
+    'name': ''
+  },
+  'locationStr': '',
+  'categoryStr': '',
+  'workNature': '',
+  'custodian': '',
+  'amountUnit': '',
+  'useDepartment': '',
+  'deviceModel': '',
+  description: ''
+}
 
 export default {
   name: 'DeviceTable',
@@ -106,6 +224,9 @@ export default {
       statusMap[DEVICE_STATUS.USING.code] = 'gray'
       statusMap[DEVICE_STATUS.DISCARDED.code] = 'danger'
       return statusMap[status]
+    },
+    topLocationFilter(locationStr) {
+      return locationStr.split('/')[0]
     }
   },
   props: {
@@ -131,6 +252,21 @@ export default {
     statusId: {
       type: Number,
       default: null
+    },
+    addDeviceDialogData: {
+      type: Object,
+      default() {
+        return {
+          // 顶级地点（校区）
+          topLocations: [],
+          brandList: [],
+          // 设备型号
+          deviceModels: [],
+          workNatureList: [],
+          // 保管人
+          custodianList: []
+        }
+      }
     }
   },
   data() {
@@ -138,33 +274,34 @@ export default {
       list: null,
       listLoading: true,
       deviceList: [
-        {
-          'id': '0',
-          'name': '',
-          'nationalId': '',
-          'serialNumber': '',
-          'useTime': 0,
-          'unitPrice': 0,
-          'statusId': 0,
-          'createTime': 0,
-          'updateTime': 0,
-          'brand': {
-            'id': '0',
-            'name': ''
-          },
-          'locationStr': '',
-          'categoryStr': '',
-          'workNature': '',
-          'custodian': '',
-          'amountUnit': '',
-          'useDepartment': '',
-          'deviceModel': ''
-        }
+        defaultDeviceRow
       ],
       // 设备总量
       deviceTotal: 0,
       // 设备搜索参数
-      searchDeviceParams: new SearchDeviceParams()
+      searchDeviceParams: new SearchDeviceParams(),
+      // 是否显示设备详情
+      deviceDetailVisible: false,
+      deviceDetailData: {
+        nameEditable: false,
+        nationalIdEditable: false,
+        serialNumberEditable: false,
+        brandEditable: false,
+        deviceModelEditable: false,
+        workNatureEditable: false,
+        custodianEditable: false,
+        unitPriceEditable: false,
+        descriptionEditable: false
+      },
+      updateDeviceRequest: {
+
+      },
+      // 查看的单个设备信息
+      deviceRow: defaultDeviceRow,
+      // 当前激活的tab名
+      activeTabName: 'baseInfo',
+      // 二维码url
+      QRCodeUrl: ''
     }
   },
   watch: {
@@ -187,6 +324,8 @@ export default {
   created() {
     this.searchDeviceParams.statusId = this.statusId
     this.fetchData()
+    // 生成二维码
+    this.genarateQRCode()
   },
   methods: {
     // 获取设备列表
@@ -199,7 +338,11 @@ export default {
       })
     },
     getDepartment: function(locationStr) {
-      return locationStr.substring(locationStr.indexOf('/') + 1, locationStr.length)
+      let startIndex = locationStr.indexOf('/')
+      if (startIndex === -1) {
+        return ''
+      }
+      return locationStr.substring(startIndex + 1, locationStr.length)
     },
     // 设备格式化时间
     formatTime: function(timestamp, deviceStatusId) {
@@ -229,6 +372,23 @@ export default {
       console.log(`当前页: ${val}`)
       this.searchDeviceParams.queryPage.pageNum = val
       this.fetchData()
+    },
+    // 显示设备详情
+    showDeviceDetail(row) {
+      this.deviceDetailVisible = true
+      this.deviceRow = row
+    },
+    handleTabClick(tab, event) {
+      console.log(tab, event)
+    },
+    genarateQRCode() {
+      QRCode.toDataURL('I am a pony!')
+        .then(url => {
+          this.QRCodeUrl = url
+        })
+        .catch(err => {
+          console.error(err)
+        })
     }
   }
 }
