@@ -47,7 +47,7 @@ export const API = {
   AddAddress: 'insert-location-by-pid',
   // 删除该节点为根的地点树
   DeleteAddress: 'delete-location-tree-by-Id/',
-  DeviceRecord: 'device/get-status-record-by-deviceId',
+  getDeviceStatusRecord: 'device/get-status-record-by-deviceId',
   // 查询设备型号
   listDeviceModel: 'device-model-listAll',
   // 添加设备型号

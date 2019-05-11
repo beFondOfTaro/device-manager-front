@@ -4,6 +4,7 @@ import app from './modules/app'
 import user from './modules/user'
 import getters from './getters'
 import device from '@/store/modules/device'
+import systemSetting from '@/store/modules/system-setting'
 
 Vue.use(Vuex)
 
@@ -11,7 +12,8 @@ const store = new Vuex.Store({
   modules: {
     app,
     user,
-    device
+    device,
+    systemSetting
   },
   getters
 })

@@ -34,6 +34,14 @@ export function listCategoryByPId(params) {
   })
 }
 
+export function addCategoryByPId(params) {
+  return request({
+    url: API.insertCategory,
+    method: 'post',
+    data: params
+  })
+}
+
 /**
  * 获取添加设备的选项卡数据
  * @param params
@@ -99,6 +107,18 @@ export function listDeviceModel(params) {
 export function listWorkNature(params) {
   return request({
     url: API.listWorkNature,
+    method: 'post',
+    data: params
+  })
+}
+
+/**
+ * 根据设备id查询设备状态变更记录
+ * @param params
+ */
+export function getDeviceStatusRecord(params) {
+  return request({
+    url: API.getDeviceStatusRecord,
     method: 'post',
     data: params
   })

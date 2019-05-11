@@ -1,17 +1,19 @@
 /**
  * 设备状态
  */
-class DeviceStatus {
+export class DeviceStatus {
   constructor(code, value) {
     this.code = code
     this.value = value
   }
   static getByCode(code) {
-    for (let item of DEVICE_STATUS) {
+    for (let key in DEVICE_STATUS) {
+      let item = DEVICE_STATUS[key]
       if (item.code === code) {
         return item
       }
     }
+    console.log(code)
     return null
   }
 }

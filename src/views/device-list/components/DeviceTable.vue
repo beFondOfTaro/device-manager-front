@@ -29,7 +29,7 @@
       </el-table-column>
       <el-table-column label="设备品牌" width="110" align="center">
         <template slot-scope="scope">
-          {{ scope.row.brand!==undefined?scope.row.brand.name:'未填写' }}
+          {{ scope.row.brand!==undefined?scope.row.brand.name:'' }}
         </template>
       </el-table-column>
       <el-table-column label="设备型号" width="110" align="center">
@@ -102,6 +102,9 @@
       <el-tabs v-model="activeTabName" type="card" @tab-click="handleTabClick">
         <el-tab-pane label="基本信息" name="baseInfo">
           <el-form label-width="80px" label-position="left">
+            <el-form-item label="id">
+              {{ deviceRow.id }}
+            </el-form-item>
             <el-form-item label="校区">
               {{ deviceRow.locationStr | topLocationFilter }}
             </el-form-item>
@@ -122,7 +125,7 @@
               <el-input v-if="deviceDetailData.serialNumberEditable" v-model="updateDeviceRequest.serialNumber" placeholder="序列号"/>
             </el-form-item>
             <el-form-item label="品牌">
-              <span v-if="!deviceDetailData.brandEditable">{{ deviceRow.brand.name }}</span>
+              <span v-if="!deviceDetailData.brandEditable">{{ deviceRow.brand!==undefined?deviceRow.brand.name:'' }}</span>
               <el-select v-if="deviceDetailData.brandEditable" v-model="updateDeviceRequest.brandId" placeholder="请选择品牌">
                 <el-option
                   v-for="brand in addDeviceDialogData.brandList"
@@ -169,9 +172,51 @@
               <span v-if="!deviceDetailData.descriptionEditable">{{ deviceRow.description }}</span>
               <el-input v-if="deviceDetailData.descriptionEditable" v-model="updateDeviceRequest.description" type="text" placeholder="无"/>
             </el-form-item>
+            <el-form-item label="状态">
+              <el-tag :type="deviceRow.statusId | statusFilter">{{ parseStatus(deviceRow.statusId) }}</el-tag>
+            </el-form-item>
           </el-form>
         </el-tab-pane>
-        <el-tab-pane label="状态记录" name="statusRecord">配置管理</el-tab-pane>
+        <el-tab-pane label="状态记录" name="statusRecord">
+          <el-table
+            :data="deviceStatusRecords"
+            element-loading-text="Loading"
+            size="small"
+            border
+            fit
+            highlight-current-row>
+            <el-table-column align="center" label="ID">
+              <template slot-scope="scope">
+                {{ scope.row.id }}
+              </template>
+            </el-table-column>
+            <el-table-column class-name="status-col" label="原始状态" align="center">
+              <template slot-scope="scope">
+                <el-tag v-if="scope.row.fromStatus != -1" :type="scope.row.fromStatus | statusFilter">{{ parseStatus(scope.row.fromStatus) }}</el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column class-name="status-col" label="当前状态" align="center">
+              <template slot-scope="scope">
+                <el-tag :type="scope.row.toStatus | statusFilter">{{ parseStatus(scope.row.toStatus) }}</el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column align="center" label="当前地点">
+              <template slot-scope="scope">
+                {{ scope.row.toLocation }}
+              </template>
+            </el-table-column>
+            <el-table-column align="center" label="变更时间">
+              <template slot-scope="scope">
+                {{ scope.row.operateTime | timeFilter }}
+              </template>
+            </el-table-column>
+            <el-table-column align="center" label="操作人员">
+              <template slot-scope="scope">
+                {{ scope.row.operateUserRealName }}
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-tab-pane>
         <el-tab-pane label="二维码" name="QRCode">
           <img :src="QRCodeUrl">
         </el-tab-pane>
@@ -185,10 +230,11 @@
 </template>
 
 <script>
-import { getDeviceList, SearchDeviceParams } from '@/api/device'
+import { getDeviceList, getDeviceStatusRecord, SearchDeviceParams } from '@/api/device'
 import { getParsedTime } from '@/utils/time'
-import { DEVICE_STATUS } from '@/constants/device-status'
+import { DEVICE_STATUS, DeviceStatus } from '@/constants/device-status'
 import QRCode from 'qrcode'
+import { QueryPage } from '@/utils/request'
 
 let defaultDeviceRow = {
   'id': '0',
@@ -197,7 +243,7 @@ let defaultDeviceRow = {
   'serialNumber': '',
   'useTime': 0,
   'unitPrice': 0,
-  'statusId': 0,
+  'statusId': DEVICE_STATUS.IN_STORAGE.code,
   'createTime': 0,
   'updateTime': 0,
   'brand': {
@@ -227,6 +273,9 @@ export default {
     },
     topLocationFilter(locationStr) {
       return locationStr.split('/')[0]
+    },
+    timeFilter(timestamp) {
+      return getParsedTime(timestamp)
     }
   },
   props: {
@@ -301,7 +350,8 @@ export default {
       // 当前激活的tab名
       activeTabName: 'baseInfo',
       // 二维码url
-      QRCodeUrl: ''
+      QRCodeUrl: '',
+      deviceStatusRecords: []
     }
   },
   watch: {
@@ -325,7 +375,7 @@ export default {
     this.searchDeviceParams.statusId = this.statusId
     this.fetchData()
     // 生成二维码
-    this.genarateQRCode()
+    this.generateQRCode()
   },
   methods: {
     // 获取设备列表
@@ -354,14 +404,10 @@ export default {
        * @returns {*}中文释义
        */
     parseStatus: function(status) {
-      switch (status) {
-        case 1:
-          return '入库'
-        case 2:
-          return '使用中'
-        case 3:
-          return '报废'
+      if (status === -1) {
+        return ''
       }
+      return DeviceStatus.getByCode(status).value
     },
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`)
@@ -377,18 +423,27 @@ export default {
     showDeviceDetail(row) {
       this.deviceDetailVisible = true
       this.deviceRow = row
+      this.getDeviceStatusRecord(this.deviceRow.id)
     },
     handleTabClick(tab, event) {
       console.log(tab, event)
     },
-    genarateQRCode() {
-      QRCode.toDataURL('I am a pony!')
+    generateQRCode() {
+      QRCode.toDataURL('https://www.baidu.com')
         .then(url => {
           this.QRCodeUrl = url
         })
         .catch(err => {
           console.error(err)
         })
+    },
+    getDeviceStatusRecord(deviceId) {
+      getDeviceStatusRecord({
+        deviceId: deviceId,
+        queryPage: new QueryPage()
+      }).then(res => {
+        this.deviceStatusRecords = res.data.list
+      })
     }
   }
 }
